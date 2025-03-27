@@ -3,6 +3,15 @@ import './App.scss';
 import { peopleFromServer } from './data/people';
 import { Person } from './types/Person';
 
+const debounce = (func: (...args: string[]) => void, delay: number) => {
+  let timer: NodeJS.Timeout;
+
+  return (...args: string[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => func(...args), delay);
+  };
+};
+
 export const App: React.FC = () => {
   const [query, setQuery] = useState('');
   const [peopleFiltered, setPeopleFiltered] =
@@ -11,15 +20,6 @@ export const App: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-
-  const debounce = (func: (...args: string[]) => void, delay: number) => {
-    let timer: NodeJS.Timeout;
-
-    return (...args: string[]) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => func(...args), delay);
-    };
-  };
 
   const filterPeople = useCallback((text: string) => {
     if (text.trim() === '') {
