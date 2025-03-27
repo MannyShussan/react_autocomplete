@@ -3,7 +3,11 @@ import './App.scss';
 import { peopleFromServer } from './data/people';
 import { Person } from './types/Person';
 
-export const App: React.FC = () => {
+type Props = {
+  debounceTime: number;
+};
+
+export const App: React.FC<Props> = ({ debounceTime = 300 }) => {
   const [query, setQuery] = useState('');
   const [peopleFiltered, setPeopleFiltered] =
     useState<Person[]>(peopleFromServer);
@@ -13,7 +17,7 @@ export const App: React.FC = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const debounce = useCallback(
-    (func: (...args: string[]) => void, delay: number = 300) => {
+    (func: (...args: string[]) => void, delay: number) => {
       let timer: NodeJS.Timeout;
 
       return (...args: string[]) => {
@@ -36,7 +40,7 @@ export const App: React.FC = () => {
     }
   }, []);
 
-  const debouncedFilter = useCallback(debounce(filterPeople, 300), [
+  const debouncedFilter = useCallback(debounce(filterPeople, debounceTime), [
     filterPeople,
   ]);
 
@@ -103,7 +107,7 @@ export const App: React.FC = () => {
                 {peopleFiltered.length > 0 ? (
                   peopleFiltered.map(person => (
                     <div
-                      key={person.slug}
+                      key={person.name}
                       className="dropdown-item"
                       data-cy="suggestion-item"
                       onMouseDown={() => handleSelectPerson(person)}
